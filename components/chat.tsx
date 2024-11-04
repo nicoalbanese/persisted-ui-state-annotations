@@ -12,6 +12,7 @@ export function Chat({
   const { messages, input, handleInputChange, handleSubmit, error } = useChat({
     initialMessages: initialMessages ?? [],
     id: chatId,
+    maxSteps: 3,
     experimental_prepareRequestBody: ({ messages }) => {
       const lastMessage = messages[messages.length - 1];
       return {
