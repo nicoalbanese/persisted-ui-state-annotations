@@ -1,7 +1,7 @@
 import { tools } from "@/ai/tools";
 import { createMessage, getMessages } from "@/lib/api/messages";
 import { openai } from "@ai-sdk/openai";
-import {  StreamData, streamText } from "ai";
+import { StreamData, streamText } from "ai";
 
 export const POST = async (request: Request) => {
   const {
@@ -25,12 +25,12 @@ export const POST = async (request: Request) => {
   // Append to general streamed data
   data.append({ test: "initialized calls" });
 
-  const result = await streamText({
+  const result = streamText({
     model: openai("gpt-4o-mini"),
     messages,
-    async onFinish({ responseMessages }) {
+    async onFinish({ response }) {
       const newChat = await createMessage(
-        [message, ...responseMessages],
+        [message, ...response.messages],
         chatId,
       );
 
@@ -43,9 +43,8 @@ export const POST = async (request: Request) => {
       data.append("call completed");
       // // close the StreamData object
       data.close();
-
     },
-    tools
+    tools,
   });
 
   return result.toDataStreamResponse({ data });

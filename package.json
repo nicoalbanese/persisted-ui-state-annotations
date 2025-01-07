@@ -16,9 +16,9 @@
     "db:check": "drizzle-kit check"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^0.0.71",
+    "@ai-sdk/openai": "^1.0.13",
     "@t3-oss/env-nextjs": "^0.11.1",
-    "ai": "^3.4.31",
+    "ai": "^4.0.27",
     "drizzle-orm": "^0.36.0",
     "drizzle-zod": "^0.5.1",
     "nanoid": "^5.0.8",
@@ -26,7 +26,7 @@
     "postgres": "^3.4.5",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^22.8.6",

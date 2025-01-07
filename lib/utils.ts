@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { CoreMessage, CoreToolMessage, CoreAssistantMessage, Message, generateId, ToolInvocation } from "ai";
 import { customAlphabet } from "nanoid";
 import { DBMessage } from "./db/schema/messages";
