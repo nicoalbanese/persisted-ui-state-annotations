@@ -1,7 +1,7 @@
 import { tools } from "@/ai/tools";
 import { createMessage, getMessages } from "@/lib/api/messages";
 import { openai } from "@ai-sdk/openai";
-import { StreamData, streamText } from "ai";
+import { createDataStreamResponse, streamText } from "ai";
 
 export const POST = async (request: Request) => {
   const {
@@ -20,33 +20,32 @@ export const POST = async (request: Request) => {
     .concat(message);
   console.log(messages);
 
-  const data = new StreamData();
-  //
-  // Append to general streamed data
-  data.append({ test: "initialized calls" });
+  return createDataStreamResponse({
+    execute: async (dataStream) => {
+      dataStream.writeData({ test: "initialized calls" });
+      const result = streamText({
+        model: openai("gpt-4o-mini"),
+        messages,
+        async onFinish({ response }) {
+          const newChat = await createMessage(
+            [message, ...response.messages],
+            chatId,
+          );
 
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
-    messages,
-    async onFinish({ response }) {
-      const newChat = await createMessage(
-        [message, ...response.messages],
-        chatId,
-      );
-
-      // message annotation:
-      data.appendMessageAnnotation({
-        id: newChat.id, // e.g. id from saved DB record
-        other: "information",
+          // message annotation:
+          dataStream.writeMessageAnnotation({
+            id: newChat.id, // e.g. id from saved DB record
+            other: "information",
+          });
+        },
+        tools,
       });
-      // // call annotation (can be any JSON serializable value)
-      data.append("call completed");
-      // // close the StreamData object
-      data.close();
+      result.mergeIntoDataStream(dataStream);
     },
-    tools,
+    onError: (error) => {
+      // Error messages are masked by default for security reasons.
+      // If you want to expose the error message to the client, you can do so here:
+      return error instanceof Error ? error.message : String(error);
+    },
   });
-
-  return result.toDataStreamResponse({ data });
-  // return result.toDataStreamResponse();
 };
