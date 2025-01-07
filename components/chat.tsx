@@ -32,24 +32,21 @@ export function Chat({
     <div className="flex flex-col w-full max-w-md pb-24 mx-auto stretch">
       <div className="space-y-4">
         {messages.map((m) => {
-          const messageId =
-            (m.annotations?.[0] as { id: string })?.id ??
-            (m as { id: string }).id;
+          // const messageId =
+          //   (m.annotations?.[0] as { id: string })?.id ??
+          //   (m as { id: string }).id;
+
+          if (m.content.length === 0 && m.toolInvocations?.length === 0)
+            return null;
           return (
             <div key={m.id} className="whitespace-pre-wrap">
               <div>
                 <div className="font-bold">{m.role}</div>
-                <p>{m.content}</p>
-                <pre>
-                  {JSON.stringify(
-                    {
-                      tools: m.toolInvocations ?? [],
-                      messageId,
-                    },
-                    null,
-                    2,
-                  )}
-                </pre>
+                {m.toolInvocations && m.toolInvocations.length > 0 ? (
+                  <pre>{JSON.stringify(m.toolInvocations, null, 2)}</pre>
+                ) : (
+                  <p>{m.content}</p>
+                )}
               </div>
             </div>
           );
